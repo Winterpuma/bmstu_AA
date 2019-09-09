@@ -1,7 +1,13 @@
 # АА Лабораторная1 Расстояние Левенштейна 
 # Л матрично, Д-Л матр, рек
 
+import string
+import random
 from time import time
+
+def RandomString(strLength = 5):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(strLength))
 
 def OutputTable(table, str1, str2):
     print("\n   ", end = " ")
@@ -80,9 +86,11 @@ def GetStrAndRun(function, output = False):
     print("Distance == ", res)
 
 
-def TimeAnalysis(function, nIter, str1, str2):
+def TimeAnalysis(function, nIter, strLen = 5)
     t1 = time()
     for i in range(nIter):
+        str1 = RandomString(strLen)
+        str2 = RandomString(strLen)
         function(str1, str2, False)
     t2 = time()
     return (t2 - t1) / nIter
@@ -107,12 +115,12 @@ def Menu():
             GetStrAndRun(DamLevTable, True)
         elif (case == "5"):
             nIter = 100
-            str1 = "omsges"
-            str2 = "woieus"
-            print("Levenshtein distance recursion: ", TimeAnalysis(LevRecursion, nIter, str1, str2))
-            print("Levenshtein distance table: ", TimeAnalysis(LevTable, nIter, str1, str2))
-            print("Damerau–Levenshtein distance recursion: ", TimeAnalysis(DamLevRecursion, nIter, str1, str2))
-            print("Damerau–Levenshtein distance table: ", TimeAnalysis(DamLevTable, nIter, str1, str2))
+            for i in range(1, 8):
+                print("Strlen: ", i)
+                print("   Lev recursion   : ", "{0:.15f}".format(TimeAnalysis(LevRecursion, nIter, i)))
+                print("   Lev table       : ", "{0:.15f}".format(TimeAnalysis(LevTable, nIter, i)))
+                print("   DamLev recursion: ", "{0:.15f}".format(TimeAnalysis(DamLevRecursion, nIter, i)))
+                print("   DamLev table    : ", "{0:.15f}".format(TimeAnalysis(DamLevTable, nIter, i)))
         else:
             flagDo = False
             

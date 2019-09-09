@@ -1,13 +1,7 @@
 import unittest
-import string
-import random
 
 from main import LevRecursion, LevTable, DamLevRecursion, DamLevTable
-
-
-def RandomString(strLength = 5):
-    letters = string.ascii_lowercase
-    return ''.join(random.choice(letters) for i in range(strLength))
+from main import RandomString
 
 class TestDistanse(unittest.TestCase):
         
