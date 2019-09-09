@@ -1,10 +1,11 @@
 # АА Лабораторная1 Расстояние Левенштейна 
 # Л матрично, Д-Л матр, рек
 
+from time import time
 
 def OutputTable(table, str1, str2):
 
-    print("   ", end = " ")
+    print("\n   ", end = " ")
     for i in str2:
         print(i, end = " ")
 
@@ -18,7 +19,7 @@ def OutputTable(table, str1, str2):
     print("\n")
 
 
-def LevRecursion(str1, str2):
+def LevRecursion(str1, str2, output = False):
     if str1 ==  '' or str2 == '':
         return abs(len(str1) - len(str2))
     forfeit = 0 if (str1[-1] == str2[-1]) else 1
@@ -43,7 +44,7 @@ def LevTable(str1, str2, output = False):
     return(table[-1][-1])
 
 
-def DamLevRecursion(str1, str2):
+def DamLevRecursion(str1, str2, output = False):
     if str1 ==  '' or str2 == '':
         return abs(len(str1) - len(str2))
     forfeit = 0 if (str1[-1] == str2[-1]) else 1
@@ -71,3 +72,57 @@ def DamLevTable(str1, str2, output = False):
     if output:        
         OutputTable(table, str1, str2)
     return(table[-1][-1])
+
+
+def GetStrAndRun(function, output = False):
+    str1 = input("Input str1: ")
+    str2 = input("Input str2: ")
+    res = function(str1, str2, output)
+    print("Distance == ", res)
+
+
+def TimeAnalysis(function, nIter, str1, str2):
+    t1 = time()
+    for i in range(nIter):
+        function(str1, str2, False)
+    t2 = time()
+    return (t2 - t1) / nIter
+
+
+def Menu():
+    flagDo = True
+    while(flagDo):
+        case = input("Menu:\n \
+\t1. Levenshtein distance recursion\n \
+\t2. Levenshtein distance table\n \
+\t3. Damerau–Levenshtein distance recursion\n \
+\t4. Damerau–Levenshtein distance table\n \
+\t5. Time analysis\n ")
+        if (case == "1"):
+            GetStrAndRun(LevRecursion, True)
+        elif (case == "2"):
+            GetStrAndRun(LevTable, True)
+        elif (case == "3"):
+            GetStrAndRun(DamLevRecursion, True)
+        elif (case == "4"):
+            GetStrAndRun(DamLevTable, True)
+        elif (case == "5"):
+            nIter = 100
+            str1 = "omsges"
+            str2 = "woieus"
+            print("Levenshtein distance recursion: ", TimeAnalysis(LevRecursion, nIter, str1, str2))
+            print("Levenshtein distance table: ", TimeAnalysis(LevTable, nIter, str1, str2))
+            print("Damerau–Levenshtein distance recursion: ", TimeAnalysis(DamLevRecursion, nIter, str1, str2))
+            print("Damerau–Levenshtein distance table: ", TimeAnalysis(DamLevTable, nIter, str1, str2))
+        else:
+            flagDo = False
+            
+            
+if __name__ == "__main__":
+    Menu()
+    
+            
+        
+
+
+    
