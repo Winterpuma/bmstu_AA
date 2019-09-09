@@ -4,7 +4,6 @@
 from time import time
 
 def OutputTable(table, str1, str2):
-
     print("\n   ", end = " ")
     for i in str2:
         print(i, end = " ")

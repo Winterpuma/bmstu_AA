@@ -1,10 +1,15 @@
 import unittest
-from main import LevRecursion, LevTable
+import string
+import random
 
-class TestLevDistanse(unittest.TestCase):
+from main import LevRecursion, LevTable, DamLevRecursion, DamLevTable
 
-    def setUp(self):
-        self.function = LevTable
+
+def RandomString(strLength = 5):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(strLength))
+
+class TestDistanse(unittest.TestCase):
         
     def testEmpty(self):
         self.assertEqual(self.function("", ""), 0)
@@ -21,8 +26,62 @@ class TestLevDistanse(unittest.TestCase):
         self.assertEqual(self.function("bc", "c"), 1)
         self.assertEqual(self.function("ab", "cd"), 2)
 
-    #def testTypo(self):
-        #self.assertEqual(self.function("ac", "ca"), 2)
+
+class TestLevDistanse(TestDistanse):
+    def setUp(self):
+        self.function = LevTable
+    def testTypo(self):
+        self.assertEqual(self.function("ac", "ca"), 2)
+        self.assertEqual(self.function("abc", "cba"), 2)
+
+                         
+class TestDamLevDistanse(TestDistanse):
+    def setUp(self):
+        self.function = DamLevTable
+    def testTypo(self):
+        self.assertEqual(self.function("ac", "ca"), 1)
+        self.assertEqual(self.function("abc", "cba"), 2)
+                         
+
+class TestTwoFunctions(unittest.TestCase):
+
+    n = 15
+    def testCompareSameLen(self):
+        for i in range(TestTwoFunctions.n):
+            str1 = RandomString(5)
+            str2 = RandomString(5)
+            self.assertEqual(self.f1(str1, str2), self.f2(str1, str2))
+
+    def testCompareDifLen(self):
+        for i in range(TestTwoFunctions.n):
+            str1 = RandomString(3)
+            str2 = RandomString(5)
+            self.assertEqual(self.f1(str1, str2), self.f2(str1, str2))
+
+    def testCompareEmpty(self):
+        for i in range(TestTwoFunctions.n):
+            str1 = RandomString(4)
+            str2 = RandomString(0)
+            self.assertEqual(self.f1(str1, str2), self.f2(str1, str2))
+        
+
+class TestLev(TestTwoFunctions):
+    def setUp(self):
+        self.f1 = LevRecursion
+        self.f2 = LevTable
+
+        
+class TestDamLev(TestTwoFunctions):
+    def setUp(self):
+        self.f1 = DamLevRecursion
+        self.f2 = DamLevTable
+    
 
 if __name__ == '__main__':
-    unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestLev)
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDamLev))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDamLevDistanse))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLevDistanse))
+    unittest.TextTestRunner().run(suite)
+    #unittest.main()
+
