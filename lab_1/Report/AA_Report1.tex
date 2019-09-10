@@ -1,0 +1,347 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+%\usepackage[14pt]{extsizes}
+\usepackage{listings}
+
+% Для листинга кода:
+\lstset{ %
+language=python,                 % выбор языка для подсветки (здесь это С)
+basicstyle=\small\sffamily, % размер и начертание шрифта для подсветки кода
+numbers=left,               % где поставить нумерацию строк (слева\справа)
+numberstyle=\tiny,           % размер шрифта для номеров строк
+stepnumber=1,                   % размер шага между двумя номерами строк
+numbersep=5pt,                % как далеко отстоят номера строк от подсвечиваемого кода
+showspaces=false,            % показывать или нет пробелы специальными отступами
+showstringspaces=false,      % показывать или нет пробелы в строках
+showtabs=false,             % показывать или нет табуляцию в строках
+frame=single,              % рисовать рамку вокруг кода
+tabsize=2,                 % размер табуляции по умолчанию равен 2 пробелам
+captionpos=t,              % позиция заголовка вверху [t] или внизу [b] 
+breaklines=true,           % автоматически переносить строки (да\нет)
+breakatwhitespace=false, % переносить строки только если есть пробел
+escapeinside={\#*}{*)}   % если нужно добавить комментарии в коде
+}
+
+% Для измененных титулов глав:
+\usepackage{titlesec, blindtext, color} % подключаем нужные пакеты
+\definecolor{gray75}{gray}{0.75} % определяем цвет
+\newcommand{\hsp}{\hspace{20pt}} % длина линии в 20pt
+% titleformat определяет стиль
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\Huge\bfseries}
+
+
+% plot
+\usepackage{pgfplots}
+\usepackage{filecontents}
+\usetikzlibrary{datavisualization}
+\usetikzlibrary{datavisualization.formats.functions}
+\begin{filecontents}{LevR.dat}
+3 0.00006
+4 0.00033
+5 0.00033
+6 0.00780
+7 0.03876
+8 0.20780
+9 1.18171
+\end{filecontents}
+
+\begin{filecontents}{LevT.dat}
+3 0.00003
+4 0.00003
+5 0.00005
+6 0.00005
+7 0.00007
+8 0.00008
+9 0.00009
+\end{filecontents}
+
+\begin{filecontents}{DamLevR.dat}
+3 0.00006
+4 0.00027
+5 0.00143
+6 0.00787
+7 0.04130
+8 0.23259
+9 1.26665
+\end{filecontents}
+
+\begin{filecontents}{DamLevT.dat}
+3 0.00003
+4 0.00003
+5 0.00005
+6 0.00006
+7 0.00007
+8 0.00013
+9 0.00012
+\end{filecontents}
+
+
+\begin{document}
+%\def\chaptername{} % убирает "Глава"
+\begin{titlepage}
+	\centering
+	{\scshape\LARGE МГТУ им. Баумана \par}
+	\vspace{3cm}
+	{\scshape\Large Лабораторная работа №1\par}
+	\vspace{0.5cm}	
+	{\scshape\Large По курсу: "Анализ алгоритмов"\par}
+	\vspace{1.5cm}
+	{\huge\bfseries Расстояние Левенштейна\par}
+	\vspace{2cm}
+	\Large Работу выполнила: Оберган Татьяна, ИУ7-55Б\par
+	\vspace{0.5cm}
+	\LargeПреподаватели:  Волкова Л.Л., Строганов Ю.В.\par
+
+	\vfill
+	\large \textit {Москва, 2019} \par
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+\textbf{Расстояние Левенштейна} - минимальное количество операций вставки одного символа, удаления одного символа и замены одного символа на другой, необходимых для превращения одной строки в другую.
+
+Расстояние Левенштейна применяется в теории информации и компьютерной лингвистике для:
+
+\begin{itemize}
+	\item исправления ошибок в слове
+	\item сравнения текстовых файлов утилитой diff
+	\item в биоинформатике для сравнения генов, хромосом и белков
+\end{itemize}
+
+Целью данной лабораторной работы является изучение метода динамического программирования на материале алгоритмов
+Левенштейна и Дамерау-Левенштейна. 
+
+Задачами данной лабораторной являются:
+\begin{enumerate}
+  	\item изучение алгоритмов Левенштейна и Дамерау-Левенштейна нахождения расстояния между строками;
+	\item применение метода динамического программирования для матричной реализации указанных алгоритмов; 
+	\item получение практических навыков реализации указанных алгоритмов: двух алгоритмов в матричной версии и одного из алгоритмов в рекурсивной версии; 
+	\item сравнительный анализ линейной и рекурсивной реализаций выбранного алгоритма определения расстояния между строками по затрачиваемым ресурсам (времени и памяти); 
+	\item экспериментальное подтверждение различий во временнóй эффективности рекурсивной и
+нерекурсивной реализаций выбранного алгоритма определения расстояния между строками при
+помощи разработанного программного обеспечения на материале замеров процессорного времени
+выполнения реализации на варьирующихся длинах строк; 
+	\item описание и обоснование полученных результатов в отчете о выполненной лабораторной
+работе, выполненного как расчётно-пояснительная записка к работе. 
+\end{enumerate}
+
+
+\chapter{Аналитическая часть}
+Задача по нахождению расстояния Левенштейна заключается в поиске минимального количества операций вставки/удаления/замены для превращения одной строки в другую.
+
+При нахождении расстояния Дамерау — Левенштейна добавляется операция транспозиции (перестановки соседних символов).  
+ 
+\textbf{Действия обозначаются так:} 
+\begin{enumerate}
+  	\item D (англ. delete) — удалить,
+	\item I (англ. insert) — вставить,
+	\item R (replace) — заменить,
+	\item M(match) - совпадение.
+\end{enumerate}
+
+Пусть $S_{1}$ и $S_{2}$ — две строки (длиной M и N соответственно) над некоторым алфавитом, тогда расстояние Левенштейна можно подсчитать по следующей рекуррентной формуле:
+
+\begin{displaymath}
+D(i,j) = \left\{ \begin{array}{ll}
+ 0, & \textrm{$i = 0, j = 0$}\\
+ i, & \textrm{$j = 0, i > 0$}\\
+ j, & \textrm{$i = 0, j > 0$}\\
+min(\\
+D(i,j-1)+1,\\
+D(i-1, j) +1, &\textrm{$j>0, i>0$}\\
+D(i-1, j-1) + m(S_{1}[i], S_{2}[j])\\
+),
+  \end{array} \right.
+\end{displaymath}
+
+где $m(a,b)$ равна нулю, если $a=b$ и единице в противном случае; $min\{\,a,b,c\}$ возвращает наименьший из аргументов.
+
+Расстояние Дамерау-Левенштейна вычисляется по следующей рекуррентной формуле:
+\begin{displaymath}
+D(i,j) = \left\{ \begin{array}{ll}
+ 0, & \textrm{$i = 0, j = 0$}\\
+ i, & \textrm{$j = 0, i > 0$}\\
+ j, & \textrm{$i = 0, j > 0$}\\
+min(\\
+D(i,j-1)+1,\\
+D(i-1, j) +1, &\textrm{$j>0, i>0$}\\
+D(i-1, j-1) + m(S_{1}[i], S_{2}[j])\\
+D(i-2, j-2) + 1, &\textrm{if $i,j>1$ and $a_{i} = b_{j-1},a_{i-1}=b_{j} $}\\
+)
+  \end{array} \right.
+\end{displaymath}
+
+
+
+\chapter{Конструкторская часть}
+\textbf{Требования к вводу:}
+\begin{enumerate}
+  	\item На вход подаются две строки
+	\item uppercase и lowercase буквы считаются разными
+\end{enumerate}
+\textbf{Требования к программе:}
+\begin{enumerate}
+  	\item Две пустые строки - корректный ввод, программа не должна аварийно завершаться
+\end{enumerate}
+
+
+\chapter{Технологическая часть}
+\section{Выбор ЯП}
+В качестве языка программирования был выбран python т.к. я знакома с данным языком, имею представление о способах тестирования программы в рамках данного языка.
+
+Время работы алгоритмов было замерено с помощью функции time() из библиотеки time.
+
+\section{Сведения о модулях программы}
+Программа состоит из:
+\begin{itemize}
+	\item main.py - главный файл программы, в котором располагаются алгоритмы и меню
+	\item test.py - файл с тестами 
+\end{itemize}
+
+\begin{lstlisting}[label=some-code,caption=Функция нахождения расстояния Левенштейна рекурсивно]
+def LevRecursion(str1, str2, output = False):
+    if str1 ==  '' or str2 == '':
+        return abs(len(str1) - len(str2))
+    forfeit = 0 if (str1[-1] == str2[-1]) else 1
+    return min(LevRecursion(str1, str2[:-1]) + 1,
+               LevRecursion(str1[:-1], str2) + 1,
+               LevRecursion(str1[:-1], str2[:-1]) + forfeit)
+\end{lstlisting}
+
+\begin{lstlisting}[label=some-code,caption=Функция нахождения расстояния Левенштейна матрично]
+def LevTable(str1, str2, output = False):
+    len_i = len(str1) + 1
+    len_j = len(str2) + 1
+    table = [[i + j for j in range(len_j)] for i in range(len_i)]
+    
+    for i in range(1, len_i):
+        for j in range(1, len_j):
+            forfeit = 0 if (str1[i - 1] == str2[j - 1]) else 1
+            table[i][j] = min(table[i - 1][j] + 1,
+                              table[i][j - 1] + 1,
+                              table[i - 1][j - 1] + forfeit)
+    if output:        
+        OutputTable(table, str1, str2)
+    return(table[-1][-1])
+\end{lstlisting}
+
+\begin{lstlisting}[label=some-code,caption=Функция нахождения расстояния Дамерау-Левенштейна рекурсивно]
+def DamLevRecursion(str1, str2, output = False):
+    if str1 ==  '' or str2 == '':
+        return abs(len(str1) - len(str2))
+    forfeit = 0 if (str1[-1] == str2[-1]) else 1
+    res = min(DamLevRecursion(str1, str2[:-1]) + 1,
+              DamLevRecursion(str1[:-1], str2) + 1,
+              DamLevRecursion(str1[:-1], str2[:-1]) + forfeit)
+    if (len(str1) >= 2 and len(str2) >= 2 and str1[-1] == str2[-2] and str1[-2] == str2[-1]):
+        res = min(res, DamLevRecursion(str1[:-2], str2[:-2]) + 1)
+    return res 
+\end{lstlisting}
+
+\begin{lstlisting}[label=some-code,caption=Функция нахождения расстояния Дамерау-Левенштейна матрично]
+def DamLevTable(str1, str2, output = False):
+    len_i = len(str1) + 1
+    len_j = len(str2) + 1
+    table = [[i + j for j in range(len_j)] for i in range(len_i)]
+    
+    for i in range(1, len_i):
+        for j in range(1, len_j):
+            forfeit = 0 if (str1[i - 1] == str2[j - 1]) else 1
+            table[i][j] = min(table[i - 1][j] + 1,
+                              table[i][j - 1] + 1,
+                              table[i - 1][j - 1] + forfeit)
+            if (i > 1 and j > 1) and str1[i-1] == str2[j-2] and str1[i-2] == str2[j-1]:
+                table[i][j] = min(table[i][j], table[i-2][j-2] + 1)
+    if output:        
+        OutputTable(table, str1, str2)
+    return(table[-1][-1])
+\end{lstlisting}
+
+\section{Тесты}
+Тестирование было организовано с помощью библиотеки  \textbf{unittest}.
+Было создано две вариации тестов:
+
+В первой сравнивались результаты функции с реальным результатом.
+
+Во второй сравнивались реузультаты двух функций(рекурсивной и табличной).
+При сравнении результатов двух функций использовалась функция RandomString, которая генерирует случайную строку нужной длины.
+
+\begin{lstlisting}[label=randStr,caption=Функция генерации случайной строки]
+def RandomString(strLength = 5):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(strLength))
+\end{lstlisting}
+
+
+\chapter{Исследовательская часть}
+
+
+Был проведен замер времени работы каждого из алгоритмов.
+
+\begin{center}
+	\begin{tabular}{|c c c c c|} 
+ 	\hline
+	len & Lev(R) & DamLev(R) & Lev(T) & DamLev(T) \\ [0.5ex] 
+ 	\hline\hline
+ 	3 & 0.00006 & 0.00006 & 0.00003 & 0.00003\\
+ 	\hline
+ 	4 & 0.00033 & 0.00027 & 0.00003 & 0.00003\\
+ 	\hline
+	5 & 0.00141 & 0.00143 & 0.00005 & 0.00005\\
+	\hline
+	6 & 0.00780 & 0.00787 & 0.00005 & 0.00006\\
+	\hline
+	7 & 0.03876 & 0.04130 & 0.00007 & 0.00007\\
+	\hline
+	8 & 0.20780 & 0.23259 & 0.00008 & 0.00013\\
+	\hline
+	9 & 1.18171 & 1.26665 & 0.00009 & 0.00012\\
+	\hline
+	\end{tabular}
+\end{center}
+
+
+
+
+
+\begin{tikzpicture}
+
+\begin{axis}[
+    	axis lines = left,
+    	xlabel = $len$,
+    	ylabel = {$time$},
+	legend pos=north west,
+	ymajorgrids=true
+]
+\addplot[color=red] table[x index=0, y index=1] {LevR.dat}; 
+\addplot[color=orange] table[x index=0, y index=1] {DamLevR.dat};
+\addplot[color=blue, mark=square] table[x index=0, y index=1] {LevT.dat};
+\addplot[color=green, mark=square] table[x index=0, y index=1] {DamLevT.dat};
+
+\addlegendentry{LevR}
+\addlegendentry{DamLevR}
+\addlegendentry{LevT}
+\addlegendentry{DamLevT}
+\end{axis}
+\end{tikzpicture}
+
+
+\par
+Рекурсивные реализации сравнимы по времени между собой. При увеличении длины строк становится очевидна выигрышность по времени матричного варианта. Уже при длине в 9 символов матричная реализация в 10,000 раз быстрее.
+
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+Был изучен метод динамического программирования на материале алгоритмов Левенштейна и Дамерау-Левенштейна.
+Также изучены алгоритмы Левенштейна и Дамерау-Левенштейна нахождения расстояния между строками, получены практические навыки раелизации указанных алгоритмов
+в матричной  и рекурсивных версиях. 
+
+Экспериментально было подтверждено различие во временной эффективности рекурсивной и нерекурсивной реализаций выбранного алгоритма определения расстояния между строками при помощи разработаного программного обеспечения на материале замеров процессорного времени выполнения реализации на варьирующихся длинах строк. 
+
+В результате исследований пришла к выводу, что матричная реализация данных алгоритмов заметно выигрывает по времени при росте длины строк.
+
+
+\end{document}
