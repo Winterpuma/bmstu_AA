@@ -32,7 +32,7 @@ def LevRecursion(str1, str2, output = False):
                LevRecursion(str1[:-1], str2) + 1,
                LevRecursion(str1[:-1], str2[:-1]) + forfeit)
     
-  
+
 def LevTable(str1, str2, output = False):
     len_i = len(str1) + 1
     len_j = len(str2) + 1
@@ -86,7 +86,7 @@ def GetStrAndRun(function, output = False):
     print("Distance == ", res)
 
 
-def TimeAnalysis(function, nIter, strLen = 5)
+def TimeAnalysis(function, nIter, strLen = 5):
     t1 = time()
     for i in range(nIter):
         str1 = RandomString(strLen)
@@ -104,7 +104,8 @@ def Menu():
 \t2. Levenshtein distance table\n \
 \t3. Damerau–Levenshtein distance recursion\n \
 \t4. Damerau–Levenshtein distance table\n \
-\t5. Time analysis\n ")
+\t5. All in one\n \
+\t6. Time analysis\n ")
         if (case == "1"):
             GetStrAndRun(LevRecursion, True)
         elif (case == "2"):
@@ -113,7 +114,7 @@ def Menu():
             GetStrAndRun(DamLevRecursion, True)
         elif (case == "4"):
             GetStrAndRun(DamLevTable, True)
-        elif (case == "5"):
+        elif (case == "6"):
             nIter = 100
             for i in range(1, 8):
                 print("Strlen: ", i)
@@ -121,11 +122,20 @@ def Menu():
                 print("   Lev table       : ", "{0:.15f}".format(TimeAnalysis(LevTable, nIter, i)))
                 print("   DamLev recursion: ", "{0:.15f}".format(TimeAnalysis(DamLevRecursion, nIter, i)))
                 print("   DamLev table    : ", "{0:.15f}".format(TimeAnalysis(DamLevTable, nIter, i)))
+        elif (case == "5"):
+            output = True
+            str1 = input("Input str1: ")
+            str2 = input("Input str2: ")
+            print("Distance LR == ", LevRecursion(str1, str2, output))
+            print("Distance LT == ", LevTable(str1, str2, output))
+            print("Distance DLR == ", DamLevRecursion(str1, str2, output))
+            print("Distance DLT == ", DamLevTable(str1, str2, output))
+            
         else:
             flagDo = False
             
             
-if __name__ == "__main__":
+if __name__ == "__main__": 
     Menu()
     
             
