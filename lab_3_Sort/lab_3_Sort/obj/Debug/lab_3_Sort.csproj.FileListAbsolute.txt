@@ -1,0 +1,7 @@
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\bin\Debug\lab_3_Sort.exe.config
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\bin\Debug\lab_3_Sort.exe
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\bin\Debug\lab_3_Sort.pdb
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\obj\Debug\lab_3_Sort.csprojAssemblyReference.cache
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\obj\Debug\lab_3_Sort.csproj.CoreCompileInputs.cache
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\obj\Debug\lab_3_Sort.exe
+D:\GitHub\bmstu_AA\lab_3_Sort\lab_3_Sort\obj\Debug\lab_3_Sort.pdb
