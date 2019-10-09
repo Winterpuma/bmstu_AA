@@ -34,6 +34,24 @@ namespace lab_3_Sort
             }
         }
 
+        public static void InserionSort(int[] arr)
+        {
+            int x, j;
+            for (int i = 2; i <= arr.Length; i++)
+            {
+                x = arr[i];
+                j = i;
+
+                while (j > 1 && arr[j - 1] > x)
+                {
+                    arr[j] = arr[j - 1];
+                    j = j - 1;
+                }
+
+                arr[j] = x;
+             }
+        }
+
         static void Swap<T>(ref T a, ref T b)
         {
             T temp = a;
