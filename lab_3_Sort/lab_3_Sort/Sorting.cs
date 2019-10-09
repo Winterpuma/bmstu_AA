@@ -45,11 +45,47 @@ namespace lab_3_Sort
                 while (j > 1 && arr[j - 1] > x)
                 {
                     arr[j] = arr[j - 1];
-                    j = j - 1;
+                    j--;
                 }
 
                 arr[j] = x;
              }
+        }
+
+        public static void QuickSort(int[] arr, int low, int high)
+        {
+            if (low < high)
+            {
+                int p = Partition(arr, low, high);
+                QuickSort(arr, low, p);
+                QuickSort(arr, p + 1, high);
+            }
+        }
+
+        public static int Partition(int[] arr, int low , int high)
+        {
+            int pivot = arr[(low + high) / 2];
+            int i = low - 1, j = high + 1;
+
+            while (true)
+            {
+                do
+                {
+                    i++;
+                }
+                while (arr[i] < pivot);
+
+                do
+                {
+                    j--;
+                }
+                while (arr[j] > pivot);
+
+                if (i >= j)
+                    return j;
+
+                Swap(ref arr[i], ref arr[j]);
+            }
         }
 
         static void Swap<T>(ref T a, ref T b)
