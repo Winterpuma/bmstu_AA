@@ -10,8 +10,8 @@ namespace lab_3_Sort
     {
         static void Main(string[] args)
         {
-            int[] a = new int[5] { 0, 5, -3, 2, 0};
-            //Sorting.BubbleSort(a);
+            int[] a = Sorting.GenerateDec(5);
+            Sorting.BubbleSort(a);
         }
 
     }

@@ -8,6 +8,8 @@ namespace lab_3_Sort
 {
     class Sorting
     {
+        static Random rand = new Random();
+
         public static void BubbleSort(int[] arr)
         {
             int i = 0;
@@ -37,6 +39,42 @@ namespace lab_3_Sort
             T temp = a;
             a = b;
             b = temp;
+        }
+
+        public static int[] GenerateRand(int n)
+        {
+            int[] arr = new int[n];
+            
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = rand.Next(1000);
+            }
+
+            return arr;
+        }
+
+        public static int[] GenerateDec(int n)
+        {
+            int[] arr = new int[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = n - i;
+            }
+
+            return arr;
+        }
+
+        public static int[] GenerateAsc(int n)
+        {
+            int[] arr = new int[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = i;
+            }
+
+            return arr;
         }
     }
 }
