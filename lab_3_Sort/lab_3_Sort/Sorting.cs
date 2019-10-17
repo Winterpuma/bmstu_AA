@@ -10,14 +10,11 @@ namespace lab_3_Sort
     {
         static Random rand = new Random();
 
-        public static void BubbleSort(int[] arr)
+        public static void BubbleSort(int[] arr, int h = 0, int z = 0)
         {
             int i = 0;
             bool swap_cnt = false;
-
-            if (arr.Length == 0)
-                return;
-
+           
             while (i < arr.Length)
             {
                 if (i + 1 != arr.Length && arr[i] > arr[i + 1])
@@ -34,10 +31,10 @@ namespace lab_3_Sort
             }
         }
 
-        public static void InserionSort(int[] arr)
+        public static void InserionSort(int[] arr, int h = 0, int z = 0)
         {
             int x, j;
-            for (int i = 2; i <= arr.Length; i++)
+            for (int i = 2; i < arr.Length; i++)
             {
                 x = arr[i];
                 j = i;
@@ -95,7 +92,7 @@ namespace lab_3_Sort
             b = temp;
         }
 
-        public static int[] GenerateRand(int n)
+        public static int[] GenerateRnd(int n)
         {
             int[] arr = new int[n];
             
