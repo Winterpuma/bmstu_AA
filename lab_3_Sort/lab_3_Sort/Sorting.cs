@@ -33,19 +33,19 @@ namespace lab_3_Sort
 
         public static void InserionSort(int[] arr, int h = 0, int z = 0)
         {
-            int x, j;
-            for (int i = 2; i < arr.Length; i++)
+            int key, j;
+            for (int i = 1; i < arr.Length; i++)
             {
-                x = arr[i];
-                j = i;
+                key = arr[i];
+                j = i - 1;
 
-                while (j > 1 && arr[j - 1] > x)
+                while (j >= 0 && arr[j] > key)
                 {
-                    arr[j] = arr[j - 1];
+                    arr[j + 1] = arr[j];
                     j--;
                 }
 
-                arr[j] = x;
+                arr[j + 1] = key;
              }
         }
 
@@ -123,6 +123,18 @@ namespace lab_3_Sort
             for (int i = 0; i < n; i++)
             {
                 arr[i] = i;
+            }
+
+            return arr;
+        }
+
+        public static int[] GenerateSame(int n)
+        {
+            int[] arr = new int[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = 0;
             }
 
             return arr;
