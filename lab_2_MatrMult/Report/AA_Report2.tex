@@ -1,0 +1,588 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+%\usepackage[14pt]{extsizes}
+\usepackage{listings}
+
+\usepackage{graphicx}
+\graphicspath{{src/}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+
+\usepackage{amsmath,amsfonts,amssymb,amsthm} 
+
+% Для листинга кода:
+\lstset{ %
+language=c++,                 % выбор языка для подсветки (здесь это С++)
+basicstyle=\small\sffamily, % размер и начертание шрифта для подсветки кода
+numbers=left,               % где поставить нумерацию строк (слева\справа)
+numberstyle=\tiny,           % размер шрифта для номеров строк
+stepnumber=1,                   % размер шага между двумя номерами строк
+numbersep=5pt,                % как далеко отстоят номера строк от подсвечиваемого кода
+showspaces=false,            % показывать или нет пробелы специальными отступами
+showstringspaces=false,      % показывать или нет пробелы в строках
+showtabs=false,             % показывать или нет табуляцию в строках
+frame=single,              % рисовать рамку вокруг кода
+tabsize=2,                 % размер табуляции по умолчанию равен 2 пробелам
+captionpos=t,              % позиция заголовка вверху [t] или внизу [b] 
+breaklines=true,           % автоматически переносить строки (да\нет)
+breakatwhitespace=false, % переносить строки только если есть пробел
+escapeinside={\#*}{*)}   % если нужно добавить комментарии в коде
+}
+
+% Для измененных титулов глав:
+\usepackage{titlesec, blindtext, color} % подключаем нужные пакеты
+\definecolor{gray75}{gray}{0.75} % определяем цвет
+\newcommand{\hsp}{\hspace{20pt}} % длина линии в 20pt
+% titleformat определяет стиль
+\titleformat{\chapter}[hang]{\Huge\bfseries}{\thechapter\hsp\textcolor{gray75}{|}\hsp}{0pt}{\Huge\bfseries}
+
+
+% plot
+\usepackage{pgfplots}
+\usepackage{filecontents}
+\usetikzlibrary{datavisualization}
+\usetikzlibrary{datavisualization.formats.functions}
+
+
+\begin{document}
+\begin{titlepage}
+	\centering
+	{\scshape\LARGE МГТУ им. Баумана \par}
+	\vspace{3cm}
+	{\scshape\Large Лабораторная работа №2\par}
+	\vspace{0.5cm}	
+	{\scshape\Large По курсу: "Анализ алгоритмов"\par}
+	\vspace{1.5cm}
+	{\huge\bfseries Алгоритмы умножения матриц\par}
+	\vspace{2cm}
+	\Large Работу выполнила: Оберган Татьяна, ИУ7-55Б\par
+	\vspace{0.5cm}
+	\LargeПреподаватели:  Волкова Л.Л., Строганов Ю.В.\par
+
+	\vfill
+	\large \textit {Москва, 2019} \par
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+\chapter*{Введение}
+\addcontentsline{toc}{chapter}{Введение}
+Цель работы: изучение алгоритмов умножения матриц. В данной лабораторной работе рассматривается стандартный алгоритм умножения матриц, алгоритм Винограда и модифицированный алгоритм Винограда.  Также требуется изучить рассчет сложности алгоритмов, получить навыки в улучшении алгоритмов.
+Эти алгоритмы активно применяются во всех областях, применяющих линейную алгебру, таких как:
+\begin{itemize}
+	\item компьютерная графика
+	\item физика
+	\item экономика
+\end{itemize}
+и так далее.\\
+
+В ходе лабораторной работы предстоит:
+\begin{itemize}
+	\item Изучить алгоритмы умножения матриц: стандартный и алгоритм Винограда 
+	\item Оптимизировать алгоритм Винограда 
+	\item Дать теоретическую оценку базового алгоритма умножения матриц, алгоритма Винограда и улучшенного алгоритма Винограда 
+	\item Реализовать три алгоритма умножения матриц на одном из языков программирования  
+	\item Сравнить алгоритмы умножения матриц  
+\end{itemize}
+
+
+
+\chapter{Аналитическая часть}
+Матрица - математический объект, эквивалентный двумерному массиву. Если число столбцов в первой матрице совпадает с числом строк во второй, то эти две матрицы можно перемножить. У произведения будет столько же строк, сколько в первой матрице, и столько же столбцов, сколько во второй.
+	    
+\section{Стандартный алгоритм умножения матриц}
+Пусть даны две прямоугольные матрицы А$[m * n]$ и В$[n * k]$:  
+
+\[ \begin{bmatrix}
+a_{1,1} & ... & a_{1,n} \\
+... & ... & ... \\
+a_{m,1} & ... & a_{m,n} \\
+\end{bmatrix} \]\\
+
+\[ \begin{bmatrix}
+b_{1,1} & ... & b_{1,k} \\
+... & ... & ... \\
+b_{n,1} & ... & b_{n,k} \\
+\end{bmatrix} \]\\
+
+В результате получим матрицу C $[m *  k]$:
+	
+\[ \begin{bmatrix}
+c_{1,1} & ... & c_{1,k} \\
+... & ... & ... \\
+c_{m,1} & ... & c_{m,k} \\
+\end{bmatrix} \]\\
+
+
+$c_{i,j} = \sum\limits_{r=1}^n a_{i,r}\cdot b_{r,j}$ называется произведением матриц A и B.
+
+
+\section{Алгоритм Винограда}
+Рассмотрим два вектора $V = (v1, v2, v3, v4)$ и $W = (w1, w2, w3, w4)$. Их скалярное произведение равно: 
+
+$ V \cdot W=v_1 \cdot w_1 + v_2 \cdot w_2 + v_3 \cdot w_3 + v_4 \cdot w_4$ \\
+
+Это равенство можно переписать в виде: \\
+$V \cdot W=(v_1 + w_2) \cdot (v_2 + w_1) + (v_3 + w_4) \cdot (v_4 + w_3) - v_1 \cdot v_2 - v_3 \cdot v_4 - w_1 \cdot w_2 - w_3 \cdot w_4$\\
+
+Менее очевидно, что выражение в правой части последнего равенства допускает предварительную обработку: его части можно вычислить заранее и запомнить для каждой строки первой матрицы и для каждого столбца второй. 
+Это означает, что над предварительно обработанными элементами нам придется выполнять лишь первые два умножения и последующие пять сложений, а также дополнительно два сложения. 
+
+\section{Вывод}
+Были рассмотрены алгоритмы классического умножения матриц и алгоритм Винограда, основное отличие которых — наличие предварительной обработки, а также количество операций умножения.
+
+
+
+\chapter{Конструкторская часть}
+\textbf{Требования к вводу:}
+На вход подаются две матрицы
+\newline
+\textbf{Требования к программе:}
+\begin{itemize}
+\item Корректное умножение двух матриц 
+\item При матрицах неправилыных размеров программа не должна аварийно завершаться
+\end{itemize}
+
+\section{Схемы алгоритмов}
+В данной части будут рассмотрены схемы алгоритмов.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[scale=0.7]{SchemeStand}
+\caption{Схема классического алгоритма умножения матриц}
+\label{fig:mpr}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[scale=0.6]{SchemeVin}
+\caption{Схема алгоритма Винограда}
+\label{fig:mpr}
+\end{figure}
+
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[scale=0.6]{SchemeVinOpt}
+\caption{Схема оптимизированного алгоритма Винограда}
+\label{fig:mpr}
+\end{figure}
+
+\newpage
+\section{Трудоемкость алгоритмов}
+Введем модель трудоемкости для оценки алгоритмов: 
+\begin{itemize}
+	\item базовые операции стоимостью 1 — +, -, *, /, =, ==, <=, >=, !=, +=, [], получение полей класса
+	\item оценка трудоемкости цикла: Fц = init +  N*(a + Fтела + post) + a, где a - условие цикла, init - предусловие цикла, post - постусловие цикла
+	\item стоимость условного перехода применим за 0, стоимость вычисления условия остаётся
+\end{itemize}
+
+Оценим трудоемкость алгоритмов по коду программы.
+
+\subsection{Трудоемкость первичной проверки}
+Рассмотрим трудоемкость первичной проверки на возможность умножения матриц.
+
+\begin{center}
+Табл. 2.1 Построчная оценка веса
+	\begin{tabular}{|l c|} 
+ 	\hline
+	Код & Вес \\ [0.5ex] 
+ 	\hline\hline
+ 	 int n1 = mart1.Length; & 2\\
+ 	\hline
+	int n2 = matr2.Length; & 2\\
+	\hline
+	 if (n1  == 0 || n2 == 0) return null; & 3\\
+	\hline
+	int m1 = mart1[0].Length; & 3\\
+	\hline
+	int m2 = matr2[0].Length; & 3\\
+	\hline
+	if (m1 != n2) return null; & 1\\
+	\hline\hline
+	Итого & 14\\
+	\hline
+	\end{tabular}
+\end{center}
+
+\subsection{Классический алгоритм}
+Рассмотрим трудоемкость классического алгоритма:  
+
+Инициализация матрицы результата: $1 + 1 + n1*(1 + 2 + 1) + 1 = 4*n1 + 3$
+
+Подсчет:\\
+$1 + M*(1 + (1 + Q*(1 + (1 + N*(1 + (8) + 1) + 1) + 1) + 1) + 1) + 1 = 
+M*(Q*(N*10 + 4) + 4) + 4) + 2 = 10NQM + 4*QM + 4M +2
+$
+
+\subsection{Алгоритм Винограда}
+Аналогично рассмотрим трудоемкость алгоритма Винограда.  \\
+
+Первый цикл: $15/2 * MN + 5 * M + 2$ 
+
+Второй цикл: $15/2 * MN + 5 * M + 2$
+
+Третий цикл: $13*MNQ + 12*MQ + 4M + 2$
+
+Условный переход: $\begin{bmatrix}
+             2    &&, \text{в случае невыполнения условия}\\
+             15*QM + 4*M + 2 &&, \text{в случае выполнения условия}\\
+           \end{bmatrix} $ \\
+
+Итого: $  13MNQ + 15MN + 12MQ + 14M + 6 + 
+       \begin{bmatrix}
+             2    &&, \text{в случае невыполнения условия}\\
+             15QM + 4M + 2 &&, \text{в случае выполнения условия}\\
+           \end{bmatrix} $ \\
+
+\subsection{Оптимизированный алгоритм Винограда}
+
+Аналогично Рассмотрим трудоемкость алгоритма Винограда:\\
+
+Первый цикл: $11/2*MN + 4*M + 2$ 
+
+Второй цикл: $11/2*MN + 4*M + 2$
+
+Третий цикл: $17/2*MNQ + 9*MQ + 4*M + 2$
+
+Условный переход: $\begin{bmatrix}
+             1    &&, \text{в случае невыполнения условия}\\
+             10*QM + 4*M + 2 &&, \text{в случае выполнения условия}\\
+           \end{bmatrix} $ \\
+
+Итого: $17/2 * MNQ + 11MN + 9MQ + 12M + 6 + 
+       \begin{bmatrix}
+             1    &&, \text{в случае невыполнения условия}\\
+             10*QM + 4*M + 2 &&, \text{в случае выполнения условия}\\
+           \end{bmatrix} $ \\
+
+
+
+\chapter{Технологическая часть}
+\section{Выбор ЯП}
+В качестве языка программирования был выбран C\#, а средой разработки Visual Studio. 
+Время работы алгоритмов было замерено с помощью класса Stopwatch.
+
+\section{Описание структуры ПО}
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\linewidth]{idef}
+\caption{Функциональная схема умножения матриц (IDEF0 диаграмма 1 уровня)}
+\label{fig:mpr}
+\end{figure}
+
+\section{Сведения о модулях программы}
+Программа состоит из:
+\begin{itemize}
+	\item Program.cs - главный файл программы, в котором располагается точка входа в программу и функция замера времени.
+	\item Mult.cs - файл класса Mult, в которм находятся алгоритмы умножения матриц
+	\item TestMult.cs - файл с юнит тестами
+\end{itemize}
+
+
+\section{Листинг кода алгоритмов}
+
+\begin{lstlisting}[label=CodeStand,caption= Стандартный алгоритм умножения матриц]
+public static int[][] MultStand(int[][] mart1, int[][] matr2)
+        {
+            int n1 = mart1.Length;
+            int n2 = matr2.Length;
+
+            if (n1  == 0 || n2 == 0)
+                return null;
+
+            int m1 = mart1[0].Length;
+            int m2 = matr2[0].Length;
+
+            if (m1 != n2)
+                return null;
+
+            int[][] res = new int[n1][];
+            for (int i = 0; i < n1; i++)
+                res[i] = new int[m2];
+
+            for (int i = 0; i < n1; i++)
+                for (int j = 0; j < m2; j++)
+                    for (int k = 0; k < m1; k++)
+                        res[i][j] += mart1[i][k] * matr2[k][j];
+
+            return res;
+        }
+\end{lstlisting}
+
+
+\begin{lstlisting}[label=some-code,caption=Алгоритм Винограда]
+public static int[][] MultVin(int[][] matr1, int[][] matr2)
+        {
+            int n1 = matr1.Length;
+            int n2 = matr2.Length;
+
+            if (n1 == 0 || n2 == 0)
+                return null;
+
+            int m1 = matr1[0].Length;
+            int m2 = matr2[0].Length;
+
+            if (m1 != n2)
+                return null;
+
+            int[] mulH = new int[n1];
+            int[] mulV = new int[m2];
+
+            int[][] res = new int[n1][];
+            for (int i = 0; i < n1; i++)
+                res[i] = new int[m2];
+
+            for (int i = 0; i < n1; i++)
+            {
+                for (int j = 0; j < m1 / 2; j++)
+                {
+                    mulH[i] = mulH[i] + matr1[i][j * 2] * matr1[i][j * 2 + 1];
+                }
+            }
+
+            for (int i = 0; i < m2; i++)
+            {
+                for (int j = 0; j < n2 / 2; j++)
+                {
+                    mulV[i] = mulV[i] + matr2[j * 2][i] * matr2[j * 2 + 1][i];
+                }
+            }
+
+            for (int i = 0; i < n1; i++)
+            {
+                for (int j = 0; j < m2; j++)
+                {
+                    res[i][j] = -mulH[i] - mulV[j];
+                    for (int k = 0; k < m1 / 2; k++)
+                    {
+                        res[i][j] = res[i][j] + (matr1[i][2 * k + 1] + matr2[2 * k][j]) * (matr1[i][2 * k] + matr2[2 * k + 1][j]);
+                    }
+                }
+            }
+
+            if (m1 \% 2 == 1)
+            {
+                for (int i = 0; i < n1; i++)
+                {
+                    for (int j = 0; j < m2; j++)
+                    {
+                        res[i][j] = res[i][j] + matr1[i][m1 - 1] * matr2[m1 - 1][j];
+                    }
+                }
+            }
+
+            return res;
+        }
+\end{lstlisting}
+
+
+\begin{lstlisting}[label=some-code,caption=Оптимизированный алгоритм Винограда]
+public static int[][] MultVinOpt(int[][] matr1, int[][] matr2)
+        {
+            int n1 = matr1.Length;
+            int n2 = matr2.Length;
+
+            if (n1 == 0 || n2 == 0)
+                return null;
+
+            int m1 = matr1[0].Length;
+            int m2 = matr2[0].Length;
+
+            if (m1 != n2)
+                return null;
+
+            int[] mulH = new int[n1];
+            int[] mulV = new int[m2];
+
+            int[][] res = new int[n1][];
+            for (int i = 0; i < n1; i++)
+                res[i] = new int[m2];
+
+            int m1Mod2 = m1 \% 2;
+            int n2Mod2 = n2 \% 2;
+
+            for (int i = 0; i < n1; i++)
+            {
+                for (int j = 0; j < (m1 - m1Mod2); j += 2)
+                {
+                    mulH[i] += matr1[i][j] * matr1[i][j + 1];
+                }
+            }
+
+            for (int i = 0; i < m2; i++)
+            {
+                for (int j = 0; j < (n2 - n2Mod2); j += 2)
+                {
+                    mulV[i] += matr2[j][i] * matr2[j + 1][i];
+                }
+            }
+
+            for (int i = 0; i < n1; i++)
+            {
+                for (int j = 0; j < m2; j++)
+                {
+                    int buff = -(mulH[i] + mulV[j]);
+                    for (int k = 0; k < (m1 - m1Mod2); k += 2)
+                    {
+                        buff += (matr1[i][k + 1] + matr2[k][j]) * (matr1[i][k] + matr2[k + 1][j]);
+                    }
+                    res[i][j] = buff;
+                }
+            }
+
+            if (m1Mod2 == 1)
+            {
+                int m1Min_1 = m1 - 1;
+                for (int i = 0; i < n1; i++)
+                {
+                    for (int j = 0; j < m2; j++)
+                    {
+                        res[i][j] += matr1[i][m1Min_1] * matr2[m1Min_1][j];
+                    }
+                }
+            }
+            
+            return res;
+        }
+\end{lstlisting}
+
+\subsection{Оптимизация алгоритма Винограда}
+В рамках данной лабораторной работы было предложено 3 оптимизации:
+\begin{enumerate}
+	\item Избавление от деления в условии цикла;
+	\item Замена $mulH[i] = mulH[i] + …$ на $mulH[i] += …$ (аналогично для $mulV[i]$);
+	
+\newpage
+	\begin{lstlisting}[label=some-code,caption=Оптимизации алгоритма Винограда №1 и №2]
+	int m1Mod2 = m1 \% 2;
+	int n2Mod2 = n2 \% 2;
+
+	for (int i = 0; i < n1; i++)
+	{
+		for (int j = 0; j < (m1 - m1Mod2); j += 2)
+		{
+			mulH[i] += matrix1[i][j] * matrix1[i][j + 1];
+		}
+	}
+
+	for (int i = 0; i < m2; i++)
+	{
+		for (int j = 0; j < (n2 - n2Mod2); j += 2)
+		{
+			mulV[i] += matrix2[j][i] * matrix2[j + 1][i];
+		}
+	}
+	\end{lstlisting}
+
+	\item Накопление результата в буфер, чтобы не обращаться каждый раз к одной и той же ячейке памяти. Сброс буфера в ячейку матрицы после цикла.
+	\begin{lstlisting}[label=some-code,caption=Оптимизации алгоритма Винограда №3]
+for (int i = 0; i < n1; i++)
+{
+	for (int j = 0; j < m2; j++)
+	{
+		int buff = -(mulH[i] + mulV[j]);
+		for (int k = 0; k < (m1 - m1Mod2); k += 2)
+		{
+			buff += (matrix1[i][k + 1] + matrix2[k][j]) * (matrix1[i][k] + matrix2[k + 1][j]);
+		}
+		result[i][j] = buff;
+	}
+}
+\end{lstlisting}
+\end{enumerate}
+
+
+
+\chapter{Исследовательская часть}
+
+\section{Сравнительный анализ на основе замеров времени работы алгоритмов}
+
+Был проведен замер времени работы каждого из алгоритмов.
+
+Первый эксперимент производится для лучшего случая на матрицах размером от 100 x 100 до 1000 x 1000 c шагом 100. 
+Сравним результаты для разных алгоритмов:
+
+\begin{tikzpicture}
+\begin{axis}[
+    	axis lines = left,
+    	xlabel = {Размер матрицы},
+    	ylabel = {Время (тики)},
+	legend pos=north west,
+	ymajorgrids=true
+]
+\addplot[color=red, mark=square] table[x index=0, y index= 1] {src/Stand0.txt}; 
+\addplot[color=green, mark=square] table[x index=0, y index= 1] {src/Vin0.txt}; 
+\addplot[color=blue, mark=square] table[x index=0, y index= 1] {src/VinOpt0.txt}; 
+
+\addlegendentry{Стандартный}
+\addlegendentry{Алг. Винограда}
+\addlegendentry{Оптимизированный алг.}
+
+\end{axis}
+\end{tikzpicture}
+\begin{center}
+Pис. 4.1: Сравнение времени работы алгоритмов при четном размере матрицы
+\end{center}
+
+\newpage
+Второй эксперимент производится для худшего случая, когда поданы матрицы с нечетными размерами от 101 x 101 до 1001 x 1001 c шагом 100. 
+Сравним результаты для разных алгоритмов:
+
+\begin{tikzpicture}
+\begin{axis}[
+    	axis lines = left,
+    	xlabel = {Размер матрицы},
+    	ylabel = {Время (тики)},
+	legend pos=north west,
+	ymajorgrids=true
+]
+\addplot[color=red, mark=square] table[x index=0, y index= 1] {src/Stand1.txt}; 
+\addplot[color=green, mark=square] table[x index=0, y index= 1] {src/Vin1.txt}; 
+\addplot[color=blue, mark=square] table[x index=0, y index= 1] {src/VinOpt1.txt}; 
+
+\addlegendentry{Стандартный}
+\addlegendentry{Алг. Винограда}
+\addlegendentry{Оптимизированный алг.}
+
+\end{axis}
+\end{tikzpicture}
+\begin{center}
+Pис. 4.2: Сравнение времени работы алгоритмов при нечетном размере матрицы
+\end{center}
+
+\section{Тестирование программы}
+
+Было произведено тестирование реализованных алгоритмов с помощью библиотеки Microsoft.VisualStudio.TestTools.UnitTesting.
+
+Всего было реализованно 7 тестовых случаев:
+\begin{itemize}
+	\item Некорректный размер матриц. Алгоритм должен возвращать Null
+	\item Размер матриц равен 1
+	\item Размер матриц равен 2
+	\item Сравнение работы стандартной реализации с Виноградом на случайных значениях
+	\subitem Четный размер
+	\subitem Нечетный размер
+	\item Сравнение работы стандартной реализации с оптимизированным Виноградом на случайных значениях
+	\subitem Четный размер
+	\subitem Нечетный размер
+\end{itemize}
+
+Далее будут предоставлены результаты тестирования программы:
+\begin{figure}[!htbp]
+\centering
+\includegraphics[scale=0.6]{TestsPassed}
+\caption{Результаты работы тестов}
+\label{fig:mpr}
+\end{figure}
+
+\section{Вывод}
+По результатам тестирования все рассматриваемые алгоритмы реализованы правильно. Самым медленным алгоритмом оказался алгоритм классического умножения матриц, а самым быстрым — оптимизированный алгоритм Винограда.
+
+\chapter*{Заключение}
+\addcontentsline{toc}{chapter}{Заключение}
+В ходе лабораторной работы я изучила алгоритмы умножения матриц: стандартный и Винограда, оптимизировала алгоритм Винограда, дала теоретическую оценку алгоритмов стандартного умножения матриц, Винограда и улучшенного Винограда, реализовала три алгоритма умножения матриц на языке программирования C\# и сравнила эти алгоритмы.
+
+
+\end{document}
