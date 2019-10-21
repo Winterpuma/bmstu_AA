@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace lab_2_MatrMult
 {
-    class Mult
+    public class Mult
     {
         public static int[][] MultStand(int[][] mart1, int[][] matr2)
         {
@@ -83,7 +83,7 @@ namespace lab_2_MatrMult
                 }
             }
 
-            if (m1 % 2 == 0)
+            if (m1 % 2 == 1)
             {
                 for (int i = 0; i < n1; i++)
                 {

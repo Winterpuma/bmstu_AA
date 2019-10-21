@@ -8,18 +8,20 @@ using System.Threading.Tasks;
 
 namespace lab_2_MatrMult
 {
-    class Program
+    public class Program
     {
         static Random rand = new Random();
 
         static void Main(string[] args)
         {
+            /*
             Time(Mult.MultStand, FillMatr, "Stand0.txt");
             Time(Mult.MultStand, FillMatr, "Stand1.txt", 1);
             Time(Mult.MultVin, FillMatr, "Vin0.txt");
             Time(Mult.MultVin, FillMatr, "Vin1.txt", 1);
             Time(Mult.MultVinOpt, FillMatr, "VinOpt0.txt");
             Time(Mult.MultVinOpt, FillMatr, "VinOpt1.txt", 1);
+            */
         }
         
         static void Time(Func<int[][], int[][], int[][]> multFunc, Func<int, int, int[][]> genFunc, string filename, int odd = 0)
@@ -48,7 +50,7 @@ namespace lab_2_MatrMult
             File.AppendAllLines(filename, lines);
         }
 
-        static int[][] FillMatr(int n, int m)
+        public static int[][] FillMatr(int n, int m)
         {
             int[][] matr = new int[n][];
             int[] tmp;
