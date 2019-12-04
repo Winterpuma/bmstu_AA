@@ -44,6 +44,11 @@ namespace lab_5_Conveyor
             conveyorAction = a;
         }
 
+        public void SetQueue(Queue<Args> q)
+        {
+            this.q = q;
+        }
+
         public void Run()
         {
             state ret = state.ok;

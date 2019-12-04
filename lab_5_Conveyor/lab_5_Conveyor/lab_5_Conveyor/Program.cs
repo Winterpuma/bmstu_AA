@@ -40,6 +40,19 @@ namespace lab_5_Conveyor
                 thread.Join();
             }
 
+            Analysis.Analyse("Threading: ", allData);
+
+            // Тоже самое в однопоточном режиме
+            List<Args> allDataLinear = new List<Args>();
+            GenData(nLines, 5, allDataLinear);
+
+            c[0].SetQueue(new Queue<Args>(allDataLinear));
+            for (int i = 0; i < nLines; i++)
+            {
+                c[i].Run();
+            }
+            Analysis.Analyse("Linear   : ", allDataLinear);
+
             Console.WriteLine("thats all");
 
         }   
@@ -48,32 +61,34 @@ namespace lab_5_Conveyor
         {
             for (int i = 0; i < size; i++)
             {
-                data.Add(new Args(nLines));
+                data.Add(new Args(nLines, i));
             }
-            data.Add(new Args(0, true));
+            data.Add(new Args(0, -1, true));
         }
 
         static void Act1(int i, Args a, int milliseconds)
         {
-            a.ts[i] = DateTime.Now.Millisecond;
-            Console.WriteLine(i.ToString() + " start " + a.ts[i].ToString());
+            a.ts[i] = DateTime.Now.Ticks;
+            Console.WriteLine(i.ToString() + " start " + a.id.ToString() + " " + a.ts[i].ToString());
             Thread.Sleep(milliseconds);
-            a.te[i] = DateTime.Now.Millisecond;
-            Console.WriteLine(i.ToString() + " end   " + a.te[i].ToString());
+            a.te[i] = DateTime.Now.Ticks;
+            Console.WriteLine(i.ToString() + " end   " + a.id.ToString() + " " + a.te[i].ToString());
         }
     }
 
     class Args
     {
         private bool last;
+        public int id;
         public long[] ts;
         public long[] te;
 
-        public Args(int n, bool lastArg = false)
+        public Args(int n, int id,  bool lastArg = false)
         {
             ts = new long[n];
             te = new long[n];
             last = lastArg;
+            this.id = id;
         }
 
         public bool IsLast()
