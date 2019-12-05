@@ -91,6 +91,16 @@ namespace lab_5_Conveyor
             return state.ok;
         }
 
+        public void RunCompletelyLinear()
+        {
+            Args el = q.Dequeue();
+            if (el.IsLast())
+                return;
+            conveyorAction(id, el, sleepTime);
+            if (nextLine != null)
+                nextLine.q.Enqueue(el);
+        }
+
 
         public void AddElement(Args arg)
         {
