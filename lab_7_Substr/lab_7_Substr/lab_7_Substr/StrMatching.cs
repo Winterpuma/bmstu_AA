@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace lab_7_Substr
 {
-    class StrMatching
+    public static class StrMatching
     {
         public static int Standard(string str, string substr)
         {
