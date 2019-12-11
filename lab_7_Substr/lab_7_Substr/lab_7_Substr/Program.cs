@@ -11,6 +11,8 @@ namespace lab_7_Substr
         static void Main(string[] args)
         {
             int i = StrMatching.Standard("aaabaa", "aba");
+            i = StrMatching.KMP("aaabaa", "aba");
+            i = StrMatching.BM("aaabaa", "aba");
         }
     }
 }
