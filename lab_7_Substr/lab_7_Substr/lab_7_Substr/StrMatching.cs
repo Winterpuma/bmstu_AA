@@ -28,7 +28,6 @@ namespace lab_7_Substr
         {
             List<int> fail = CreateStateMachine(str);
             int subloc = 0, textloc = 0;
-            int res = -1;
             while ((subloc < substr.Length) && (textloc < str.Length))
             {
                 if ((subloc == 0) || (str[textloc] == substr[subloc]))
@@ -40,10 +39,10 @@ namespace lab_7_Substr
                     subloc = fail[subloc];
             }
             if (subloc >= substr.Length)
-                res = textloc - substr.Length;
-            return res;
+                return textloc - substr.Length;
+            return -1;
         }
-
+        
         static List<int> CreateStateMachine(string s)
         {
             List<int> fail = new List<int>();
@@ -58,79 +57,92 @@ namespace lab_7_Substr
             }
             return fail;
         }
-
-        static List<int> CreateArrShift(string sub)
-        {
-            List<int> shift = new List<int>();
-            for (int i = 0; i < 256; i++)
-                shift.Add(sub.Length);
-            for (int i = 0; i < sub.Length; i++)
-                shift[sub[i]] = i;
-            return shift;
-        }
-
-        public static List<int> CreateArrJump(string substr)
-        {
-            List<int> jump = new List<int>(), link = new List<int>();
-            for (int i = 0; i < substr.Length; i++)
-            {
-                jump.Add(2 * substr.Length - i - 1);
-                link.Add(0);
-            }
-            link.Add(0);
-            int test = substr.Length - 1;
-            int target = substr.Length;
-            while (test > 0)
-            {
-                link[test] = target;
-                while ((target < substr.Length) && (substr[test] != substr[target]))
-                {
-                    jump[target] = Math.Min(jump[target], substr.Length - test - 1);
-                    target = link[target];
-                }
-                test--;
-                target--;
-            }
-            ;
-            for (int i = 0; i < target; i++)
-                jump[i] = Math.Min(jump[i], substr.Length + target - i - 1);
-
-            int tmp = link[target];
-            while (target < substr.Length)
-            {
-                while (target < tmp)
-                {
-                    jump[target] = Math.Min(jump[target], tmp - target + substr.Length + 1);
-                    target++;
-                }
-                tmp = link[tmp];
-            }
-            return jump;
-        }
-
         
+
+        static bool IsPrefix(string x, int p)
+        {
+            int j = 0;
+            for (int i = p; i < x.Length; i++)
+            {
+                if (x[i] != x[j])
+                    return false;
+                j++;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Возвращает для позиции p длину максимальной подстроки
+        /// которая является суффиксом шаблона x
+        /// </summary>
+        /// <param name="substr"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        static int SuffixLength(string substr, int p)
+        {
+            int len = 0;
+            int i = p, j = substr.Length - 1;
+            while (i >= 0 && substr[i] == substr[j])
+            {
+                len++;
+                i--;
+                j--;
+            }
+            return len;
+        }
+
+        /// <summary>
+        /// Функция для вычисления сдвигов хороших суффиксов
+        /// </summary>
+        static int[] PreBmGs(string substr)
+        {
+            int[] table = new int[substr.Length];
+            int lastPrefixPosition = substr.Length;
+
+            for (int i = substr.Length - 1; i >= 0; i--)
+            {
+                if (IsPrefix(substr, i + 1))
+                    lastPrefixPosition = i + 1;
+                table[substr.Length - 1 - i] = lastPrefixPosition - i + substr.Length - 1;
+            }
+
+            for (int i = 0; i < substr.Length - 1; i++)
+            {
+                int slen = SuffixLength(substr, i);
+                table[slen] = substr.Length - 1 - i + slen;
+            }
+
+            return table;
+        }
+
         public static int BM(string str, string substr)
         {
-            List<int> shift = CreateArrShift(substr);
-            List<int> jump = CreateArrJump(substr);
+            if (substr.Length == 0)
+                return -1;
             
-            int textLoc = substr.Length - 1;
-            int subLoc = substr.Length - 1;
-            while ((textLoc <= str.Length) && (subLoc > 0))
-            {
-                if (str[textLoc] == substr[subLoc])
-                {
-                    textLoc--;
-                    subLoc--;
-                }
+            Dictionary<char, int> letters = new Dictionary<char, int>();
+            for (int i = 0; i < substr.Length; i++)
+                if (letters.ContainsKey(substr[i]))
+                    letters[substr[i]] = substr.Length - 1 - i;
                 else
+                    letters.Add(substr[i], substr.Length - 1 - i);
+
+            int[] bmGs = PreBmGs(substr);
+
+            for (int i = substr.Length - 1; i < str.Length;)
+            {
+                int j = substr.Length - 1;
+                while (substr[j] == str[i])
                 {
-                    textLoc = textLoc + Math.Max(shift[str[textLoc]], jump[subLoc]);
-                    subLoc = substr.Length - 1;
+                    if (j == 0)
+                        return i;
+                    i--;
+                    j--;
                 }
+                var a = letters.ContainsKey(str[i]) ? letters[str[i]] : 1;
+                var b = bmGs[substr.Length - 1 - j];
+                i += Math.Max(a, b);
             }
-            if (subLoc == 0)
-                return textLoc;
             return -1;
         }
 
