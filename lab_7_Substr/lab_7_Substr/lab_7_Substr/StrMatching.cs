@@ -23,41 +23,44 @@ namespace lab_7_Substr
             }
             return -1;
         }
-
+        
         public static int KMP(string str, string substr)
         {
-            List<int> fail = CreateStateMachine(str);
-            int subloc = 0, textloc = 0;
-            while ((subloc < substr.Length) && (textloc < str.Length))
+            int[] prefix = PrefixFunction(substr);
+            int last_prefix = 0;
+            for (int i = 0; i < str.Length; i++)
             {
-                if ((subloc == 0) || (str[textloc] == substr[subloc]))
+                while (last_prefix > 0 && substr[last_prefix] != str[i])
+                    last_prefix = prefix[last_prefix - 1];
+
+                if (substr[last_prefix] == str[i])
+                    last_prefix++;
+
+                if (last_prefix == substr.Length)
                 {
-                    textloc++;
-                    subloc++;
+                    return i + 1 - substr.Length;
                 }
-                else
-                    subloc = fail[subloc];
             }
-            if (subloc >= substr.Length)
-                return textloc - substr.Length;
             return -1;
         }
-        
-        static List<int> CreateStateMachine(string s)
+
+        static int[] PrefixFunction(string substr)
         {
-            List<int> fail = new List<int>();
-            for (int i = 0; i < s.Length; i++)
-                fail.Add(0);
-            for (int i = 2; i < s.Length; i++)
+            int[] prefix = new int[substr.Length];
+
+            int last_prefix = prefix[0] = 0;
+            for (int i = 1; i < substr.Length; i++)
             {
-                int tmp = fail[i - 1];
-                while ((tmp > 0) && (s[tmp] != s[i - 1]))
-                    tmp = fail[tmp];
-                fail[i] = tmp + 1;
+                while (last_prefix > 0 && substr[last_prefix] != substr[i])
+                    last_prefix = prefix[last_prefix - 1];
+
+                if (substr[last_prefix] == substr[i])
+                    last_prefix++;
+
+                prefix[i] = last_prefix;
             }
-            return fail;
+            return prefix;
         }
-        
 
         static bool IsPrefix(string x, int p)
         {
