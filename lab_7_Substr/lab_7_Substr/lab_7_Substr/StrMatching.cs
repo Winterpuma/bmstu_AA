@@ -48,16 +48,16 @@ namespace lab_7_Substr
         {
             int[] prefix = new int[substr.Length];
 
-            int last_prefix = prefix[0] = 0;
+            int lastPrefix = prefix[0] = 0;
             for (int i = 1; i < substr.Length; i++)
             {
-                while (last_prefix > 0 && substr[last_prefix] != substr[i])
-                    last_prefix = prefix[last_prefix - 1];
+                while (lastPrefix > 0 && substr[lastPrefix] != substr[i])
+                    lastPrefix = prefix[lastPrefix - 1];
 
-                if (substr[last_prefix] == substr[i])
-                    last_prefix++;
+                if (substr[lastPrefix] == substr[i])
+                    lastPrefix++;
 
-                prefix[i] = last_prefix;
+                prefix[i] = lastPrefix;
             }
             return prefix;
         }
@@ -97,7 +97,7 @@ namespace lab_7_Substr
         /// <summary>
         /// Функция для вычисления сдвигов хороших суффиксов
         /// </summary>
-        static int[] PreBmGs(string substr)
+        static int[] GetSuffix(string substr)
         {
             int[] table = new int[substr.Length];
             int lastPrefixPosition = substr.Length;
@@ -130,7 +130,7 @@ namespace lab_7_Substr
                 else
                     letters.Add(substr[i], substr.Length - 1 - i);
 
-            int[] bmGs = PreBmGs(substr);
+            int[] suffix = GetSuffix(substr);
 
             for (int i = substr.Length - 1; i < str.Length;)
             {
@@ -143,7 +143,7 @@ namespace lab_7_Substr
                     j--;
                 }
                 var a = letters.ContainsKey(str[i]) ? letters[str[i]] : 1;
-                var b = bmGs[substr.Length - 1 - j];
+                var b = suffix[substr.Length - 1 - j];
                 i += Math.Max(a, b);
             }
             return -1;

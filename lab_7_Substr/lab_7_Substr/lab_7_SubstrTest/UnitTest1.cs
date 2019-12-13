@@ -14,7 +14,7 @@ namespace lab_7_SubstrTest
         {
             for (int i = 0; i < N; i++)
             {
-                string s = rand.Next(1000000, 9999999).ToString();
+                string s = rand.Next(1000, 9999999).ToString();
                 string sub = rand.Next(100, 999).ToString();
 
                 int iCorrect = s.IndexOf(sub);
@@ -28,7 +28,7 @@ namespace lab_7_SubstrTest
         {
             for (int i = 0; i < N; i++)
             {
-                string s = rand.Next(1000000, 9999999).ToString();
+                string s = rand.Next(1000, 9999999).ToString();
                 string sub = rand.Next(100, 999).ToString();
 
                 int iCorrect = s.IndexOf(sub);
@@ -42,7 +42,7 @@ namespace lab_7_SubstrTest
         {
             for (int i = 0; i < N; i++)
             {
-                string s = rand.Next(1000000, 9999999).ToString();
+                string s = rand.Next(1000, 9999999).ToString();
                 string sub = rand.Next(100, 999).ToString();
 
                 int iCorrect = s.IndexOf(sub);
