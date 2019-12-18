@@ -10,6 +10,7 @@ namespace lab_6_Ant
     {
         static void Main(string[] args)
         {
+            var m = new Map(4);
         }
     }
 }
