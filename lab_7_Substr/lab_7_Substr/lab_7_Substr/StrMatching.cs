@@ -142,7 +142,7 @@ namespace lab_7_Substr
                     i--;
                     j--;
                 }
-                var a = letters.ContainsKey(str[i]) ? letters[str[i]] : 1;
+                var a = letters.ContainsKey(str[i]) ? letters[str[i]] : substr.Length;
                 var b = suffix[substr.Length - 1 - j];
                 i += Math.Max(a, b);
             }
