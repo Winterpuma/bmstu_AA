@@ -15,6 +15,8 @@ namespace lab_6_Ant
 
         public Map(int n, int width = 40, int height = 40)
         {
+            this.n = n;
+
             position = new Point[n];
             for (int i = 0; i < n; i++)
             {
@@ -36,7 +38,28 @@ namespace lab_6_Ant
                 }
             }
         }
+    }
 
+    class Path
+    {
+        public readonly int[] route;
+        public readonly int distance;
+
+        public Path(Map m, params int[] route)
+        {
+            this.route = route;
+            distance = GetDistance(m, route);
+        }
+
+        static public int GetDistance(Map m, params int[] route)
+        {
+            int distance = 0;
+            for (int i = 0; i < route.Length - 1; i++)
+            {
+                distance += m.distance[route[i]][route[i + 1]];
+            }
+            return distance;
+        }
     }
 
     class Point

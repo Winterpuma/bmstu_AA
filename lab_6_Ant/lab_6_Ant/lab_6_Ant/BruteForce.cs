@@ -8,8 +8,31 @@ namespace lab_6_Ant
 {
     class BruteForce
     {
-        
-        public static List<List<T>> GetAllCombinations<T>(IList<T> arr, List<List<T>> res = null, List<T> current = null)
+        public static Path GetShortestPath(Map m)
+        {
+            int[] routeIndexes = new int[m.n - 1];
+            for (int i = 0; i < m.n - 1; i++)
+            {
+                routeIndexes[i] = i + 1;
+            }
+            // Нет смысла рассматривать маршруты, начинающиеся в 1, 2... городах, т.к они будут кольцевым сдвигом тех, что для 0 города
+            var allRoutes = GetAllRoutes(routeIndexes); // Все комбинации маршрутов, начинающихся в 0 городе;
+
+            Path shortestPath = new Path(m, 0, 0); // distance = -1
+            foreach (List<int> path in allRoutes)
+            {
+                // Путь начинается и заканчивается с 0 города
+                path.Insert(0, 0);
+                path.Add(0);
+                Path cur = new Path(m, path.ToArray());
+                if (cur.distance < shortestPath.distance)
+                    shortestPath = cur;
+            }
+
+            return shortestPath;
+        }
+
+        public static List<List<T>> GetAllRoutes<T>(IList<T> arr, List<List<T>> res = null, List<T> current = null)
         {
             if (res == null)
                 res = new List<List<T>>();
@@ -30,7 +53,7 @@ namespace lab_6_Ant
                 else
                     next = new List<T>(current);
                 next.Add(arr[i]);
-                GetAllCombinations(lst, res, next);
+                GetAllRoutes(lst, res, next);
             }
             return res;
         }
