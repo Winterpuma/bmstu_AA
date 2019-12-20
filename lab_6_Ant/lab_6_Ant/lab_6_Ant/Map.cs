@@ -42,13 +42,34 @@ namespace lab_6_Ant
 
     class Path
     {
-        public readonly int[] route;
-        public readonly int distance;
+        public List<int> route;
+        public int distance;
+        private Map m;
+
+        public Path(Map m)
+        {
+            route = new List<int>();
+            this.m = m;
+        }
 
         public Path(Map m, params int[] route)
         {
-            this.route = route;
+            this.m = m;
+            this.route = route.ToList();
             distance = GetDistance(m, route);
+        }
+
+        public Path(Map m, List<int> route)
+        {
+            this.m = m;
+            this.route = route;
+            distance = GetDistance(m, route.ToArray());
+        }
+
+        public void AddVertex(int v)
+        {
+            distance += m.distance[route.Last()][v];
+            route.Add(v);
         }
 
         public Path(int maxDistance)
@@ -78,7 +99,7 @@ namespace lab_6_Ant
 
         public static int GetDistance(Point a, Point b)
         {
-            return (int)Math.Sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+            return (int)Math.Ceiling(Math.Sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y)));
         }
     }
 }
