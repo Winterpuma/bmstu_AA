@@ -18,7 +18,7 @@ namespace lab_6_Ant
             // Нет смысла рассматривать маршруты, начинающиеся в 1, 2... городах, т.к они будут кольцевым сдвигом тех, что для 0 города
             var allRoutes = GetAllRoutes(routeIndexes); // Все комбинации маршрутов, начинающихся в 0 городе;
 
-            Path shortestPath = new Path(m, 0, 0); // distance = -1
+            Path shortestPath = new Path(int.MaxValue);
             foreach (List<int> path in allRoutes)
             {
                 // Путь начинается и заканчивается с 0 города
