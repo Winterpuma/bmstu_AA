@@ -51,6 +51,11 @@ namespace lab_6_Ant
             distance = GetDistance(m, route);
         }
 
+        public Path(int maxDistance)
+        {
+            distance = maxDistance;
+        }
+
         static public int GetDistance(Map m, params int[] route)
         {
             int distance = 0;
