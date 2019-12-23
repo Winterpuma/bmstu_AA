@@ -32,6 +32,14 @@ namespace lab_6_Ant
             return shortestPath;
         }
 
+        /// <summary>
+        /// Получение всех возможных перестановок массива
+        /// </summary>
+        /// <typeparam name="T">Тип значений</typeparam>
+        /// <param name="arr">Массив элементов для перестановки</param>
+        /// <param name="res">Для результата: массив всех возможных перестановок</param>
+        /// <param name="current">Массив значений текущей ветки</param>
+        /// <returns></returns>
         public static List<List<T>> GetAllRoutes<T>(IList<T> arr, List<List<T>> res = null, List<T> current = null)
         {
             if (res == null)
