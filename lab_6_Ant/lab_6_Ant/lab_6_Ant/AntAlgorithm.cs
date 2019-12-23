@@ -10,6 +10,16 @@ namespace lab_6_Ant
     {
         public static readonly Random r = new Random();
         
+        /// <summary>
+        /// Нахождение кратчайшего маршрута муравьиным алгоритмом
+        /// </summary>
+        /// <param name="map">Граф</param>
+        /// <param name="nIter">Количество дней</param>
+        /// <param name="alpha">Параметр влияния длины пути</param>
+        /// <param name="beta">Параметр влияния феромона</param>
+        /// <param name="Q">Количество феромона, переносимого муравьем</param>
+        /// <param name="ro">Коэффициент испарения феромона</param>
+        /// <returns></returns>
         public static Path GetShortestPath(Map map, int nIter, double alpha, double beta, double Q, double ro)
         {
             Path minPath = new Path(int.MaxValue);
@@ -68,9 +78,9 @@ namespace lab_6_Ant
                 // Находим минимальные пути этого дня
                 foreach (Ant a in ants)
                 {
+                    a.VisitedTown(a.iStartTown);
                     if (a.GetDistance() < minPath.distance)
                     {
-                        a.VisitedTown(a.iStartTown);
                         minPath = a.path;
                     }
                 }                
